@@ -2,9 +2,10 @@
 
 // memory extension samples
 interface CreepMemory {
-  role: string;
+  role: CreepRole;
   room: string;
   working: boolean;
+  creationTime: number;
 }
 
 interface Memory {
@@ -18,3 +19,12 @@ declare namespace NodeJS {
     log: any;
   }
 }
+
+declare const enum CreepRole {
+  Harvester = "Harvester",
+  Builder = "Builder",
+  Upgrader = "Upgrader",
+  WallRepairer = "WallRepairer"
+}
+
+

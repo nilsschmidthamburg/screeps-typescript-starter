@@ -43,10 +43,10 @@ export class EarlyBuilder {
       const tower = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
         filter: structure => {
           return structure.structureType === STRUCTURE_TOWER &&
-            structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
+            (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 500 || (structure.pos.inRangeTo(creep, 1) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0))
         }
       }) as StructureTower;
-      if (tower !== null && tower.store.getFreeCapacity(RESOURCE_ENERGY) > 500 || tower.pos.inRangeTo(creep, 1)) {
+      if (tower !== null) {
         if (creep.transfer(tower, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
           creep.moveTo(tower, {visualizePathStyle: {stroke: "#ffffff"}});
         }

@@ -42,34 +42,41 @@ export class Tower {
       return;
     }
 
-    function amountToBeHealed(pos: RoomPosition) {
+    // FIXME: This should be unit tested!!!
+    function amountToBe(action: ("ATTACKED" | "REPAIRED" | "HEALED"), pos: RoomPosition) {
+      const distance = tower.pos.getRangeTo(pos);
       // FIXME Calculate effectiveness:
 
-      /*
-      Energy per action	10
-      Attack effectiveness	600 hits at range ≤5 to 150 hits at range ≥20
-      Heal effectiveness	400 hits at range ≤5 to 100 hits at range ≥20
-      Repair effectiveness	800 hits at range ≤5 to 200 hits at range ≥20
-      */
-      return 200;
+      const max = action === "ATTACKED" ? 600 : (action === "HEALED" ? 400 : 800);
+      const min = action === "ATTACKED" ? 150 : (action === "HEALED" ? 100 : 200);
+      if (distance <= 5) {
+        return max;
+      } else if (distance >= 20) {
+        return min;
+      } else {
+        return max - (((max - min) / 15) * (distance - 5));
+      }
+      // Attack:  600 hits at range ≤5 to 150 hits at range ≥20
+      // Heal:    400 hits at range ≤5 to 100 hits at range ≥20
+      // Repair:  800 hits at range ≤5 to 200 hits at range ≥20
     }
 
     function findMyCreepsToHeal() {
       return tower.room.find(FIND_MY_CREEPS, {
-        filter: c => c.hits <= c.hitsMax - amountToBeHealed(tower.pos)
+        filter: c => c.hits < c.hitsMax
       });
     }
 
     function findMyStructuresToRepair() {
       return tower.room.find(FIND_MY_STRUCTURES, {
-        filter: structure => structure.structureType !== STRUCTURE_RAMPART && structure.hits <= structure.hitsMax - amountToBeHealed(tower.pos)
+        filter: structure => structure.structureType !== STRUCTURE_RAMPART && structure.hits < structure.hitsMax
       });
     }
 
     function findRoadsToRepair() {
       return tower.room.find(FIND_STRUCTURES, {
         filter: structure =>
-          structure.structureType === STRUCTURE_ROAD && structure.hits <= 25000 && structure.hits <= structure.hitsMax - amountToBeHealed(tower.pos)
+          structure.structureType === STRUCTURE_ROAD && structure.hits <= 25000 && structure.hits < structure.hitsMax
       });
     }
 
@@ -77,7 +84,7 @@ export class Tower {
       // Important!!! Do not repair wall to more than a thousand hitpoints! Otherwise we will spend our whole enegry.
       return tower.room.find(FIND_STRUCTURES, {
         filter: structure =>
-          structure.structureType === STRUCTURE_WALL && structure.hits <= 1000 - amountToBeHealed(tower.pos)
+          structure.structureType === STRUCTURE_WALL && structure.hits <= 1000
       });
     }
 
@@ -85,7 +92,7 @@ export class Tower {
       // Important!!! Do not repair ramparts to more than a thousand hitpoints! Otherwise we will spend our whole enegry.
       return tower.room.find(FIND_MY_STRUCTURES, {
         filter: structure =>
-          structure.structureType === STRUCTURE_RAMPART && structure.hits <= 1000 - amountToBeHealed(tower.pos)
+          structure.structureType === STRUCTURE_RAMPART && structure.hits <= 30000
       });
     }
   }

@@ -4,15 +4,7 @@ import {EarlyBuilder} from "./EarlyBuilder";
 export class EarlyWallRepairer {
 
   public static run(creep: Creep) {
-
-    if (creep.memory.working && creep.store[RESOURCE_ENERGY] === 0) {
-      creep.memory.working = false;
-      creep.say('🔄 harvest');
-    }
-    if ((!creep.memory.working && creep.store.getFreeCapacity() === 0) || creep.room.find(FIND_SOURCES_ACTIVE).length === 0) {
-      creep.memory.working = true;
-      creep.say('🚧 repair');
-    }
+    BaseCreepApi.setWorkingInMemory(creep);
 
     function someWallToBeRepaired() {
       const walls = creep.room.find(FIND_STRUCTURES, {
@@ -33,7 +25,7 @@ export class EarlyWallRepairer {
           return true;
         } else {
           const rampart = creep.pos.findClosestByRange(ramparts, {
-            filter: (w: StructureWall) => w.hits / w.hitsMax < percentage
+            filter: (w: StructureRampart) => w.hits / w.hitsMax < percentage
           });
           if (rampart != null) {
             if (creep.repair(rampart) === ERR_NOT_IN_RANGE) {

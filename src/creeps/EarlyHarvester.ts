@@ -3,14 +3,7 @@ import {EarlyBuilder} from "./EarlyBuilder";
 
 export class EarlyHarvester {
   public static run(creep: Creep) {
-    if (creep.store[RESOURCE_ENERGY] === 0) {
-      creep.memory.working = false;
-      // Start harvesting
-    }
-    if (!creep.memory.working && creep.store.getFreeCapacity() === 0) {
-      creep.memory.working = true;
-      // Stop harvesting!
-    }
+    BaseCreepApi.setWorkingInMemory(creep);
 
     if (creep.memory.working) {
       const target = creep.pos

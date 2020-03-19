@@ -2,9 +2,9 @@ import {BaseCreepApi} from "./BaseCreepApi";
 
 export class Invader {
   public static run(creep: Creep) {
-    if (creep.room.name === creep.memory.homeRoom && creep.memory.working) {
+    if (creep.room.name !== creep.memory.destinationRoom && creep.memory.working) {
       // Go to room to invade
-      BaseCreepApi.goToRoom(creep, creep.memory.destinationRoom);
+      BaseCreepApi.goToRoom(creep, creep.memory.destinationRoom!!);
     } else if (creep.room.name !== creep.memory.homeRoom && !creep.memory.working) {
       // Go home
       BaseCreepApi.goToRoom(creep, creep.memory.homeRoom);
@@ -35,11 +35,11 @@ export class Invader {
     }
   }
 
-  public static spawnInvader(spawn: string, destinationRoom: string) {
+  public static spawnInvader(spawn: StructureSpawn, destinationRoom: string) {
     // ATTACK = 80
     // TOUGH = 10
     // MOVE = 100
-    const blocks = Math.floor((Game.spawns.Spawn1.room.energyAvailable - 50) / 140);
+    const blocks = Math.floor((spawn.room.energyAvailable - 50) / 140);
     const modules: BodyPartConstant[] = [];
     for (let i = 0; i < blocks; i++) {
       modules.push(TOUGH)
@@ -52,10 +52,10 @@ export class Invader {
     }
     modules.push(MOVE)
 
-    Game.spawns[spawn].spawnCreep(modules, "Darth Invader " + Game.time % 10, {
+    spawn.spawnCreep(modules, "Darth Invader " + Game.time % 10, {
       memory: {
         role: CreepRole.Invader,
-        homeRoom: Game.spawns.Spawn1.room.name,
+        homeRoom: spawn.room.name,
         destinationRoom: destinationRoom,
         working: false,
         creationTime: Game.time

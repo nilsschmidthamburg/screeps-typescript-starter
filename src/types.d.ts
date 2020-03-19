@@ -5,9 +5,13 @@
 interface CreepMemory {
   role: CreepRole;
   homeRoom: string;
-  destinationRoom: string;
+  destinationRoom: (string | null);
   working: boolean;
   creationTime: number;
+}
+
+interface SpawnMemory {
+  claimRoom: (string | null);
 }
 
 interface Memory {
@@ -29,6 +33,7 @@ declare const enum CreepRole {
   WallRepairer = "WallRepairer",
   LongDistanceHarvester = "LongDistanceHarvester",
   Invader = "Invader",
+  Claimer = "Claimer",
 }
 
 

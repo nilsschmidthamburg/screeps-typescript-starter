@@ -5,6 +5,10 @@ export class EarlyBuilder {
 
   public static run(creep: Creep) {
     BaseCreepApi.setWorkingInMemory(creep);
+    if (creep.memory.destinationRoom !== null && creep.room.name !== creep.memory.destinationRoom) {
+      BaseCreepApi.goToRoom(creep, creep.memory.destinationRoom)
+      return;
+    }
 
     function someTowerToFill() {
       const tower = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
